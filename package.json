@@ -3,7 +3,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "pnpm -r --filter=./courses/** run build"
+    "build": "pnpm -r --filter=./courses/** run build && node ./scripts/build.js"
   },
   "dependencies": {
     "@slidev/cli": "catalog:",
