@@ -1,0 +1,16 @@
+{
+  "name": "ai-courses",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r --filter=./courses/** run build"
+  },
+  "dependencies": {
+    "@slidev/cli": "catalog:",
+    "@slidev/theme-default": "catalog:",
+    "@slidev/theme-seriph": "catalog:",
+    "@slidev/types": "0.50.0-beta.5",
+    "node-tikzjax": "catalog:",
+    "vue": "catalog:"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@ai-courses/01-partial-vectors",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "slidev build",
+    "dev": "slidev --open",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@slidev/cli": "catalog:",
+    "node-tikzjax": "catalog:"
+  }
+}
