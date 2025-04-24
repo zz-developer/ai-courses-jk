@@ -1,9 +1,9 @@
 {
-  "name": "@ai-courses/01-simple-linear-regression",
+  "name": "@ai-courses/02-derivative-mlp",
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "slidev build --base /01-simple-linear-regression",
+    "build": "slidev build --base /02-derivative-mlp",
     "dev": "slidev --open",
     "export": "slidev export"
   },

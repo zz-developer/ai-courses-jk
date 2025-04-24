@@ -1,4 +1,11 @@
-import { readdirSync, existsSync, rmdirSync, mkdirSync, renameSync, writeFileSync } from "fs";
+import {
+  readdirSync,
+  existsSync,
+  rmdirSync,
+  mkdirSync,
+  renameSync,
+  writeFileSync,
+} from "fs";
 import { resolve } from "path";
 
 const exceptFolders = ["shared", ".DS_Store"];
@@ -17,31 +24,28 @@ let index = `<!DOCTYPE html>
 <body>
     <h1>Course List</h1>
     <ul>
-`
+`;
+const distDir = resolve("dist");
+if (existsSync(distDir)) {
+  rmdirSync(distDir, { recursive: true });
+}
+mkdirSync(distDir);
 
 dirs.forEach((dir) => {
   // Move `dist` in current folder to root `dist` folder with its name
-  const distDir = resolve("dist");
-  if (existsSync(distDir)) {
-    rmdirSync(distDir, { recursive: true });
-  }
-  mkdirSync(distDir);
   const src = resolve("courses", dir, "dist");
   const dest = resolve("dist", dir);
   if (existsSync(src)) {
     mkdirSync(dest);
-    const files = readdirSync(src);
-    files.forEach((file) => {
-      renameSync(resolve(src, file), resolve(dest, file));
-    });
+    renameSync(src, dest);
   }
-  index += `        <li><a href="/${dir}">${dir}</a></li>\n`
+  index += `        <li><a href="/${dir}">${dir}</a></li>\n`;
 });
 
 index += `    </ul>
 
 </body>
 </html>
-`
+`;
 
 writeFileSync(resolve("dist", "index.html"), index);
