@@ -21,6 +21,29 @@ transition: slide-left
 mdc: true
 # take snapshot for each slide in the overview
 overviewSnapshots: true
+addons:
+  - slidev-addon-python-runner
+
+# Optional configuration for this runner
+python:
+  # Install packages from PyPI. Default: []
+  installs: ["cowsay"]
+
+  # Code executed to set up the environment. Default: ""
+  prelude: |
+    GREETING_FROM_PRELUDE = "Hello, Slidev!"
+
+  # Automatically load the imported builtin packages. Default: true
+  loadPackagesFromImports: true
+
+  # Disable annoying warning from `pandas`. Default: true
+  suppressDeprecationWarnings: true
+
+  # Always reload the Python environment when the code changes. Default: false
+  alwaysReload: false
+
+  # Options passed to `loadPyodide`. Default: {}
+  loadPyodideOptions: {}
 ---
 
 # Course 02: 导数与多层感知机
@@ -232,3 +255,182 @@ layout: two-cols
 <img src="./figures/grad-desc.png" class="w-[80%] mx-auto" />
 
 </v-clicks>
+
+---
+layout: section
+---
+
+# 反向传播
+
+---
+layout: two-cols
+---
+
+# 反向传播的原理
+
+<v-clicks>
+
+反向传播（Backpropagation）是神经网络训练中的核心算法，用于计算损失函数对每个参数的梯度，从而更新参数以最小化损失函数。
+
+反向传播的核心思想是利用链式法则，将损失函数的梯度从输出层逐层传播到输入层。
+
+主要步骤包括：
+
+1. **前向传播**：计算神经网络的输出和损失函数值。
+2. **反向传播**：从输出层开始，逐层计算梯度。
+3. **参数更新**：利用梯度下降法更新参数。
+
+</v-clicks>
+
+::right::
+
+<v-clicks>
+
+<img src="./figures/backpropagation.png" class="w-[80%] mx-auto" />
+
+</v-clicks>
+
+---
+
+# 反向传播的数学公式
+
+<v-clicks>
+
+假设神经网络的损失函数为 $L$，输出为 $\hat{y}$，目标值为 $y$，权重为 $\boldsymbol{W}$，偏置为 $\boldsymbol{b}$，激活函数为 $f$。
+
+1. **输出层的梯度**：
+   $$
+   \dfrac{\partial L}{\partial \hat{y}} = \hat{y} - y
+   $$
+
+2. **隐藏层的梯度**（链式法则）：
+   $$
+   \dfrac{\partial L}{\partial \boldsymbol{W}} = \dfrac{\partial L}{\partial \hat{y}} \cdot \dfrac{\partial \hat{y}}{\partial \boldsymbol{W}}
+   $$
+
+3. **参数更新**（梯度下降）：
+   $$
+   \boldsymbol{W} \gets \boldsymbol{W} - \eta \cdot \dfrac{\partial L}{\partial \boldsymbol{W}}
+   $$
+
+其中，$\eta$ 为学习率。
+
+</v-clicks>
+
+---
+
+# 反向传播的实现
+
+<v-clicks>
+
+反向传播的实现通常分为以下几步：
+
+1. **初始化参数**：随机初始化权重和偏置。
+2. **前向传播**：计算每一层的输出。
+3. **计算损失**：根据预测值和目标值计算损失函数。
+4. **反向传播**：逐层计算梯度。
+5. **更新参数**：利用梯度下降法更新权重和偏置。
+
+反向传播的效率和准确性对神经网络的训练效果至关重要。
+
+</v-clicks>
+
+---
+layout: section
+---
+
+# 示例代码
+
+---
+
+# Pre-process (you can ignore this cell)
+
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torchvision import datasets, transforms
+
+# Data preprocessing
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.5,), (0.5,))
+])
+
+train_dataset = datasets.MNIST(root='./data', train=True, transform=transform, download=True)
+test_dataset = datasets.MNIST(root='./data', train=False, transform=transform, download=True)
+
+train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=64, shuffle=True)
+test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=64, shuffle=False)
+```
+
+---
+
+# Module Definition
+
+```python
+class MLP(nn.Module):
+    def __init__(self):
+        super(MLP, self).__init__()
+        self.fc1 = nn.Linear(28 * 28, 128)
+        self.relu = nn.ReLU()
+        self.fc2 = nn.Linear(128, 64)
+        self.fc3 = nn.Linear(64, 10)
+
+    def forward(self, x):
+        x = x.view(-1, 28 * 28)  # Flatten the input
+        x = self.relu(self.fc1(x))
+        x = self.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+# Initialize model, loss function and optimizer
+model = MLP()
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+```
+---
+
+# Training and Testing
+
+```python
+
+# Training the model
+for epoch in range(10):  # epochs
+    model.train()
+    for images, labels in train_loader:
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+    print(f"Epoch [{epoch+1}/10], Loss: {loss.item():.4f}")
+
+# Evaluating the model
+model.eval()
+correct = 0
+total = 0
+with torch.no_grad():
+    for images, labels in test_loader:
+        outputs = model(images)
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+print(f"Test Accuracy: {100 * correct / total:.2f}%")
+```
+
+---
+layout: section
+---
+
+# Do It Yourself
+
+---
+layout: end
+---
+
+# Thank you!

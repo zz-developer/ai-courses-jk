@@ -11,6 +11,7 @@
     "@slidev/cli": "catalog:",
     "@slidev/theme-default": "catalog:",
     "@slidev/theme-seriph": "catalog:",
+    "slidev-addon-python-runner": "^0.1.3",
     "vue": "catalog:"
   }
 }
