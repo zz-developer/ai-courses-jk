@@ -3,7 +3,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "pnpm exec playwright install && pnpm -r --filter=./courses/** run build --download && node ./scripts/build.js",
+    "build": "pnpm exec playwright install-deps && pnpm exec playwright install && pnpm -r --filter=./courses/** run build --download && node ./scripts/build.js",
     "build:slides": "pnpm -r --filter=./courses/** run build --download"
   },
   "dependencies": {
