@@ -1,0 +1,17 @@
+{
+  "name": "@ai-courses/03-convolutional-network",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "slidev build --base /03-convolutional-network",
+    "dev": "slidev --open",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@slidev/cli": "catalog:",
+    "@slidev/theme-default": "catalog:",
+    "@slidev/theme-seriph": "catalog:",
+    "slidev-addon-python-runner": "^0.1.3",
+    "vue": "catalog:"
+  }
+}
