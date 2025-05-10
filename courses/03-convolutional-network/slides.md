@@ -238,3 +238,87 @@ layout: section
 ---
 
 # MNIST 实现
+
+---
+layout: two-cols
+---
+
+# MNIST 数据集介绍
+
+<v-clicks>
+
+上节课我们讲了用普通的 MLP 来训练 MNIST 数据集，今天我们来讲讲卷积神经网络。
+
+该数据库通过对来自 NIST 原始数据库的样本进行修改创建，涵盖手写数字的图像，共包含 $60,000$ 张训练图像和 $10,000$ 张测试图像，尺寸为 $28 \times 28$ 像素。
+
+该数据库广泛运用于机器学习领域的训练与测试当中。MNIST 在其发布时使用支持向量机的错误率为 $0.8\%$，但一些研究后来通过使用深度学习技术显著改进了这一成绩。
+
+</v-clicks>
+
+::right::
+
+<v-clicks>
+
+<img src="./figures/mnist.png">
+
+</v-clicks>
+
+---
+
+# LeNet
+
+<v-clicks>
+
+LeNet 是由 Yann LeCun 等人于 1989 年提出的卷积神经网络模型，最初用于手写数字识别。
+
+LeNet 由多个卷积层、池化层和全连接层组成，具有较少的参数量和较好的性能。
+
+LeNet 的结构如下：
+
+- 输入层：输入图像为 $28 \times 28$ 像素的灰度图像。
+- 卷积层 1：使用 $5 \times 5$ 的卷积核，输出 $6$ 个特征图，步幅为 $1$，填充为 $2$。
+- 池化层 1：使用 $2 \times 2$ 的池化窗口，步幅为 $2$，进行最大池化。
+- 卷积层 2：使用 $5 \times 5$ 的卷积核，输出 $16$ 个特征图，步幅为 $1$，填充为 $0$。
+- 池化层 2：使用 $2 \times 2$ 的池化窗口，步幅为 $2$，进行最大池化。
+- 全连接层 1：将特征图展平，输出 $120$ 个神经元。
+- 全连接层 2：输出 $84$ 个神经元。
+- 输出层：输出 $10$ 个神经元，对应 $10$ 个数字类别。
+
+</v-clicks>
+
+---
+
+# LeNet 代码实现
+
+以 LeNet 5 为例。
+
+<v-clicks>
+
+```python
+class LeNet5(nn.Module):
+    def __init__(self):
+        super(LeNet5, self).__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(1, 6, kernel_size=5),   # (1,32,32) → (6,28,28)
+            nn.Tanh(),
+            nn.AvgPool2d(2, stride=2),        # (6,28,28) → (6,14,14)
+            nn.Conv2d(6, 16, kernel_size=5),  # (6,14,14) → (16,10,10)
+            nn.Tanh(),
+            nn.AvgPool2d(2, stride=2),        # (16,10,10) → (16,5,5)
+            nn.Conv2d(16, 120, kernel_size=5),# (16,5,5) → (120,1,1)
+            nn.Tanh()
+        )
+        self.classifier = nn.Sequential(
+            nn.Linear(120, 84),
+            nn.Tanh(),
+            nn.Linear(84, 10)
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        x = x.view(x.size(0), -1)  # flatten
+        x = self.classifier(x)
+        return x
+```
+
+</v-clicks>
